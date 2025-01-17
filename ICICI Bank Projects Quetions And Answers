@@ -1,0 +1,106 @@
+####FIND THE EMPLOYEES WHOSE ID IS 52 AND BRANCH NAME IS ICIC_P
+
+
+SELECT employees.department_id, branch_name,employee_id
+FROM employees
+JOIN bank_details ON employees.department_id = bank_details.department_id
+WHERE employees.employee_id = 52
+and branch_name = 'ICIC_P' ;
+
+
+
+
+###write a query to fetch all deatils who does not belong to mumbai, pune ,delhi
+
+select * from bank_details
+where address not in ("mumbai", "pune", "delhi") ;
+
+
+###find department_id , department name , address, branch code ,dept_id ,city of the account no 18190.
+
+SELECT department.employee_id, department_name,  customer.account_no,bank_details.branch_name
+FROM department
+JOIN customer ON department.employee_id = customer.employee_id
+JOIN bank_details ON customer.branch_code = bank_details.branch_code 
+WHERE customer.account_no = '1890' ;
+
+
+
+### FIND THE DEPARTMENT_ID , DEPARTMENT_NAME, JOB_ID WHOSE BELONG TO HR, ADMIN AND LOAN DEPARTMENT ONLY
+
+select department.department_id  , department_name , Job_id
+from department
+join job_details on department.department_id = job_details.department_id
+where department.department_name in ("admin","hr","loan");
+
+###Find the type_account, state, account number whose atm no 422748663.
+select account_type.department_name , bank_details.state,account_type.type_account
+from account_type
+join department on account_type.department_name = department.department_name
+join customer on department.account_no = customer.account_no
+join bank_details on customer.branch_code = bank_details.branch_code
+where customer.atm_no = 422748663 ;
+
+SELECT account_type.account_no, bank_details.state ,account_type.type_account
+FROM account_type
+JOIN department ON account_type.account_no = department.account_no
+JOIN customer ON department.account_no = customer.account_no
+JOIN bank_details ON customer.branch_code = bank_details.branch_code
+WHERE customer.atm_no = 422748663;
+
+###Create a view with that show address, branch name, department name, first name. phone no.
+
+CREATE VIEW view4 AS
+SELECT department.account_no, bank_details.address, bank_details.branch_name, customer.first_name, employees.phone_no,department.department_name
+FROM department
+JOIN customer ON department.account_no = customer.account_no
+JOIN bank_details ON customer.branch_code = bank_details.branch_code
+JOIN job_details ON bank_details.branch_code = job_details.branch_code
+JOIN employees ON job_details.job_id = employees.job_id;
+
+select * from view4;
+
+### Create view city, department name whose opening date is less than 2024-05-04
+
+create view view_5 as 
+select customer.account_no, customer.city , department.department_name, account_type.opening_date
+ from customer
+join department on customer.account_no = department.account_no
+join account_type on department.account_no =account_type.account_no
+where account_type.opening_date < "2024-05-04" ;
+
+
+select * from view_5 ;
+
+
+###Create view only job id for clerk, manager, an accountant with all detail and name it employee job_deatils
+
+
+CREATE VIEW employee_job_deatils AS
+select   employees.phone_no , employees.First_Name ,employees.Department_id ,employees.Manager_id ,employees.Job_id ,employees.Email ,employees.Hire_Date ,employees.Salary ,
+customer.branch_code ,customer.atm_no, customer.pin_no,customer.exp_date ,
+bank_details.state, bank_details.address ,
+department.account_no , department.department_name ,
+account_type.opening_date, account_type.type_account
+from employees
+join customer on employees.phone_no = customer.phone_no
+join department on customer.account_no = department.account_no
+join account_type on department.account_no = account_type.account_no
+join bank_details on customer.branch_code = bank_details.branch_code
+where employees.job_id in ("ST_MAN","FI_ACCOUNT","ST_CLERK" );
+
+SELECT * FROM employee_job_deatils ;
+
+###In the Customer table change the atm_no 423295535 with 42321992.
+select * from customer;
+
+update customer
+set atm_no  = 42321992
+where atm_no = 423295535  ;
+
+###In the Account_type table change all sales account into admin.
+select * from account_type ;
+
+update account_type
+set department_name = "admin"
+where department_name = "sales" ;
